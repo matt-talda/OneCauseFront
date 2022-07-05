@@ -21,7 +21,8 @@ label {
     text-align: start;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="password"] {
     width: 300px;
     margin-bottom: 1em;
 }

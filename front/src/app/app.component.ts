@@ -13,12 +13,12 @@ import { catchError, retry } from 'rxjs/operators';
 export class AppComponent {
   constructor(private http: HttpClient) {}
 
-  postLogin(username: string, password: string) {
-      var body = JSON.stringify({username: username, password: password});
-      var header = new HttpHeaders()
+  postLogin(username: string, password: string, token: string) {
+      let body = JSON.stringify({username: username, password: password, token: token});
+      let header = new HttpHeaders()
         .set("content-type", "application/json");
 
-      return this.http.post<any>('/', body, {headers: header});
+      return this.http.post<any>('/auth/login', body, {headers: header});
   }
 
   handleLoginErrror(error: HttpErrorResponse) {
@@ -29,10 +29,10 @@ export class AppComponent {
 
   onSubmit(loginForm: NgForm) {
 
-    this.postLogin(loginForm.value.username, loginForm.value.username)
+    this.postLogin(loginForm.value.username, loginForm.value.password, loginForm.value.token)
         .subscribe({
           next(r) {
-            console.log(r);
+            window.location.href = 'http://onecause.com';
           },
           error(e) {
             console.log(e.status);
