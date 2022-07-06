@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +10,11 @@ import { catchError, retry } from 'rxjs/operators';
 })
 
 export class AppComponent {
+  @ViewChild('loginForm') ngForm!: NgForm
+
+  formChangesSubscription: any;
+  errorMsg: string|null = null;
+
   constructor(private http: HttpClient) {}
 
   postLogin(username: string, password: string, token: string) {
@@ -21,26 +25,30 @@ export class AppComponent {
       return this.http.post<any>('/auth/login', body, {headers: header});
   }
 
-  handleLoginErrror(error: HttpErrorResponse) {
-    console.log(error.status);
-
-    return throwError(() => new Error("shit"));
+  adas() {
+    console.log(this.errorMsg);
   }
 
   onSubmit(loginForm: NgForm) {
 
-    this.postLogin(loginForm.value.username, loginForm.value.password, loginForm.value.token)
-        .subscribe({
-          next(r) {
-            window.location.href = 'http://onecause.com';
-          },
-          error(e) {
-            console.log(e.status);
-          },
-          complete() {
+    if (loginForm.invalid) {
+      this.errorMsg = "test"
+      return;
+    }
 
-          }
+    const auth: any = this.postLogin(loginForm.value.username, loginForm.value.password, loginForm.value.token)
+        .subscribe({
+          next: r => window.location.href = 'http://onecause.com',
+          error: e => this.errorMsg = e.error.error,
+          complete: () => auth.unsubscribe()
         });
   }
 
+  ngAfterViewInit() {
+    this.formChangesSubscription = this.ngForm.form.valueChanges.subscribe(() => { this.errorMsg = null})
+  }
+
+  ngOnDestroy() {
+    this.formChangesSubscription.unsubscribe();
+  }
 }

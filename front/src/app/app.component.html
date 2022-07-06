@@ -1,14 +1,18 @@
 <div class="flexContainer">
   <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
     <label for="username">Username</label>
-    <input type="text" id="username" name="username" ngModel>
+    <input type="email" id="username" name="username" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" required ngModel #username="ngModel">
     
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" ngModel>
+    <input type="password" id="password" name="password" pattern="^[\x00-\x7F]+$" required ngModel #password="ngModel">
 
     <label for="token">Token</label>
-    <input type="password" id="token" name="token" ngModel>
+    <input type="password" id="token" name="token" maxlength="4" pattern="^[0-9]+$" required ngModel #token="ngModel">
 
     <input type="submit" value="Login">
+
+    <div class="errorContainer" *ngIf="errorMsg">
+      {{errorMsg}}
+    </div>
   </form>
 </div>

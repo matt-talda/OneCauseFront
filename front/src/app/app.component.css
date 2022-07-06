@@ -21,7 +21,7 @@ label {
     text-align: start;
 }
 
-input[type="text"],
+input[type="email"],
 input[type="password"] {
     width: 300px;
     margin-bottom: 1em;
@@ -29,4 +29,15 @@ input[type="password"] {
 
 input[type="submit"] {
     width: 150px;
+    margin-bottom: 1em;
+}
+
+.errorContainer {
+    background-color: rgb(214, 57, 57);
+    color: white;
+    padding: 0.25em;
+    min-width: 300px;
+    text-align: center;
+    border-radius: 3px;
+    font-weight: bold;
 }
