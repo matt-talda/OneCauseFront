@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -25,21 +24,17 @@ export class AppComponent {
       return this.http.post<any>('/auth/login', body, {headers: header});
   }
 
-  adas() {
-    console.log(this.errorMsg);
-  }
-
   onSubmit(loginForm: NgForm) {
 
     if (loginForm.invalid) {
-      this.errorMsg = "test"
+      this.errorMsg = 'Error: invalid username, password, or token'
       return;
     }
 
     const auth: any = this.postLogin(loginForm.value.username, loginForm.value.password, loginForm.value.token)
         .subscribe({
           next: r => window.location.href = 'http://onecause.com',
-          error: e => this.errorMsg = e.error.error,
+          error: e => this.errorMsg = `ERROR: ${e.error.error}`,
           complete: () => auth.unsubscribe()
         });
   }

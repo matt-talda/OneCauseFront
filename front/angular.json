@@ -66,8 +66,8 @@
             "browserTarget": "front:build",
             "proxyConfig": "src/proxy.conf.json",
             "ssl": true,
-            "sslKey": "../back/SSL/secad.key",
-            "sslCert": "../back/SSL/secad.ctr"
+            "sslKey": "ssl/localhost.key",
+            "sslCert": "ssl/localhost.ctr"
           },
           "configurations": {
             "production": {

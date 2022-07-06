@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/mail"
+	"strconv"
 	"time"
 	"unicode"
 )
@@ -27,7 +28,7 @@ func responseMsg(w http.ResponseWriter, statusCode int, msg string) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	SET_TOKEN := time.Now().Format("1504")
+	SET_TOKEN := time.Now().Format("1504") // format: hhmm
 
 	if r.Body != nil {
 		bytes, err := ioutil.ReadAll(r.Body)
@@ -43,21 +44,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		_, err = mail.ParseAddress(body.Username)
+		if err != nil {
+			responseMsg(w, http.StatusBadRequest, `{"error": "invalid email"}`)
+			return
+		}
+
 		for i := 0; i < len(body.Password); i++ {
 			if body.Password[i] > unicode.MaxASCII {
-				responseMsg(w, http.StatusBadRequest, `{"error": "invalid json"}`)
+				responseMsg(w, http.StatusBadRequest, `{"error": "invalid password"}`)
 				return
 			}
 		}
 
-		_, err = mail.ParseAddress(body.Username)
+		_, err = strconv.Atoi(body.Token)
 		if err != nil || len(body.Token) > 4 {
-			responseMsg(w, http.StatusBadRequest, `{"error": "invalid json"}`)
+			responseMsg(w, http.StatusBadRequest, `{"error": "invalid token"}`)
 			return
 		}
 
 		if body.Username == SET_USERNAME && body.Password == SET_PASSWORD && body.Token == SET_TOKEN {
-			responseMsg(w, http.StatusOK, `{"error": ""}`)
+			responseMsg(w, http.StatusOK, `{"error": null}`)
 		} else {
 			responseMsg(w, http.StatusUnauthorized, `{"error": "incorrect credentials"}`)
 		}
@@ -66,6 +73,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/auth/login", handler)
-	//log.Fatal(http.ListenAndServe(":8080", nil))
-	log.Fatal(http.ListenAndServeTLS(":8080", "SSL/secad.ctr", "SSL/secad.key", nil))
+	log.Fatal(http.ListenAndServeTLS(":8080", "../ssl/localhost.ctr", "../ssl/localhost.key", nil))
 }
